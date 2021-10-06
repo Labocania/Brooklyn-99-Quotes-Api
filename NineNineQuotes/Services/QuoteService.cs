@@ -10,17 +10,26 @@ namespace NineNineQuotes.Services
     public class QuoteService
     {
         private readonly AppDbContext _context;
-        private Random _random;
+        private Random _random = new();
         public QuoteService(AppDbContext context)
         {
             _context = context;
         }
 
-        public async Task<Quote> GetRandomQuote()
+        public async Task<Quote> GetRandomQuoteAsync()
         {
-            _random = new Random();
             int maxId = _context.Quotes.OrderBy(e => e.Id).AsNoTracking().LastOrDefault().Id;
             return await _context.Quotes.FindAsync(_random.Next(1, maxId));
+        }
+
+        public async Task<Quote> GetRandomQuoteFromCharacterAsync(string character)
+        {
+            IQueryable<Quote> query = _context.Quotes.Where(quote => quote.Character == character).AsNoTracking();
+            int maxSkip = query.Count();
+            return await query.OrderBy(quote => quote.Id)
+                .Skip(_random.Next(1, maxSkip))
+                .Take(1)
+                .FirstOrDefaultAsync();
         }
 
         public async Task<List<Quote>> GetAllQuotesFromCharacter(string character, int skipNumber, int takeNumber)

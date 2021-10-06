@@ -26,17 +26,27 @@ namespace NineNineQuotes.Controllers
         [HttpGet("random")]
         public SingleResponse<Quote> GetRandomQuote()
         {
-            Quote randomQuote = _quoteService.GetRandomQuote().Result;
+            Quote randomQuote = _quoteService.GetRandomQuoteAsync().Result;
             SingleResponse<Quote> response = new(randomQuote);
             return response;
         }
 
-        // GET api/<QuotesController>/all?character=Jake&pageNumber=1&pageSize=50
+        // GET api/<QuotesController>/random/Amy
+        [HttpGet("random/{character:maxlength(30)}")]
+        public SingleResponse<Quote> GetRandomQuoteFromCharacter(string character)
+        {
+            Quote randomQuote = _quoteService.GetRandomQuoteFromCharacterAsync(character).Result;
+            SingleResponse<Quote> response = new(randomQuote);
+            return response;
+        }
+
+        // GET api/<QuotesController>/all/Jake?pageNumber=1&pageSize=50
         [HttpGet("all/{character:maxlength(30)}")]
         public async Task<IActionResult> GetAllQuotesFromCharacter([FromQuery] PaginationFilter filter, string character)
         {
             PaginationFilter inputFilter = new(filter.PageNumber, filter.PageSize);
             List<Quote> response = await _quoteService.GetAllQuotesFromCharacter(character, filter.PageNumber, filter.PageSize);
+
             if (response.Count != 0)
             {
                 return Ok(new PagedResponse<List<Quote>>(response, inputFilter.PageNumber, inputFilter.PageSize));
