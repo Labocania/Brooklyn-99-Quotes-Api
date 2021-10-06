@@ -12,9 +12,6 @@ namespace NineNineQuotes.Wrappers
             PageNumber = pageNumber;
             PageSize = pageSize;
             Data = data;
-            Message = null;
-            Succeeded = true;
-            Errors = null;
         }
     }
 }

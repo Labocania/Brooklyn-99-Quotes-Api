@@ -37,7 +37,14 @@ namespace NineNineQuotes.Controllers
         {
             PaginationFilter inputFilter = new(filter.PageNumber, filter.PageSize);
             List<Quote> response = await _quoteService.GetAllQuotesFromCharacter(character, filter.PageNumber, filter.PageSize);
-            return Ok(new PagedResponse<List<Quote>>(response, inputFilter.PageNumber, inputFilter.PageSize));
+            if (response.Count != 0)
+            {
+                return Ok(new PagedResponse<List<Quote>>(response, inputFilter.PageNumber, inputFilter.PageSize));
+            }
+            else
+            {
+                return NoContent();
+            }
         }
 
         // GET api/<QuotesController>/5
