@@ -30,7 +30,9 @@ namespace NineNineQuotes
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbProvider(Environment, Configuration);
-            services.AddControllers();
+            services.AddScoped<Services.QuoteService>();
+            services.AddControllers(options => options.OutputFormatters.RemoveType<Microsoft.AspNetCore.Mvc.Formatters.StringOutputFormatter>())
+                .AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "NineNineQuotes", Version = "v1" });

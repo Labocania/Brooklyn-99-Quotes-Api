@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using NineNineQuotes.Services;
+using NineNineQuotes.Data;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -12,11 +14,19 @@ namespace NineNineQuotes.Controllers
     [ApiController]
     public class QuotesController : ControllerBase
     {
-        // GET: api/<QuotesController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly QuoteService _quoteService;
+
+        public QuotesController(QuoteService quoteService)
         {
-            return new string[] { "value1", "value2" };
+            _quoteService = quoteService;
+        }
+
+        // GET: api/<QuotesController>
+        [HttpGet("random")]
+        public Quote Get()
+        {
+            Quote randomQuote = _quoteService.GetRandomQuote().Result;
+            return randomQuote;
         }
 
         // GET api/<QuotesController>/5
