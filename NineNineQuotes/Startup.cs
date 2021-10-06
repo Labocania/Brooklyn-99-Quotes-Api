@@ -36,14 +36,6 @@ namespace NineNineQuotes
 
             services.AddScoped<Services.QuoteService>();
 
-            services.AddSingleton<Services.IUriService>(options =>
-            {
-                IHttpContextAccessor accessor = options.GetRequiredService<IHttpContextAccessor>();
-                HttpRequest request = accessor.HttpContext.Request;
-                string uri = string.Concat(request.Scheme, "://", request.Host.ToUriComponent());
-                return new Services.UriService(uri);
-            });
-
             services.AddControllers(options => options.OutputFormatters.RemoveType<Microsoft.AspNetCore.Mvc.Formatters.StringOutputFormatter>())
                 .AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
 

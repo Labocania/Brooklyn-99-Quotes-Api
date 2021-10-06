@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using NineNineQuotes.Services;
 using NineNineQuotes.Data;
@@ -28,15 +27,15 @@ namespace NineNineQuotes.Controllers
         public SingleResponse<Quote> GetRandomQuote()
         {
             Quote randomQuote = _quoteService.GetRandomQuote().Result;
-            SingleResponse<Quote> response = new SingleResponse<Quote>(randomQuote);
+            SingleResponse<Quote> response = new(randomQuote);
             return response;
         }
 
         // GET api/<QuotesController>/all?character=Jake&pageNumber=1&pageSize=50
-        [HttpGet("all/{character}")]
+        [HttpGet("all/{character:maxlength(30)}")]
         public async Task<IActionResult> GetAllQuotesFromCharacter([FromQuery] PaginationFilter filter, string character)
         {
-            PaginationFilter inputFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
+            PaginationFilter inputFilter = new(filter.PageNumber, filter.PageSize);
             List<Quote> response = await _quoteService.GetAllQuotesFromCharacter(character, filter.PageNumber, filter.PageSize);
             return Ok(new PagedResponse<List<Quote>>(response, inputFilter.PageNumber, inputFilter.PageSize));
         }
