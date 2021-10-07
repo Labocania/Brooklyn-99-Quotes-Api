@@ -16,6 +16,16 @@ namespace NineNineQuotes.Services
             _context = context;
         }
 
+        private IQueryable<Quote> FindCharacter(string character)
+        {
+            return _context.Quotes.Where(quote => quote.Character == character).AsNoTracking();
+        }
+
+        private IQueryable<Quote> FindEpisode(string episode)
+        {
+            return _context.Quotes.Where(quote => quote.Episode == episode).AsNoTracking();
+        }
+
         public async Task<Quote> GetRandomQuoteAsync()
         {
             int maxId = _context.Quotes.OrderBy(e => e.Id).AsNoTracking().LastOrDefault().Id;
@@ -24,7 +34,7 @@ namespace NineNineQuotes.Services
 
         public async Task<Quote> GetRandomQuoteFromCharacterAsync(string character)
         {
-            IQueryable<Quote> query = _context.Quotes.Where(quote => quote.Character == character).AsNoTracking();
+            IQueryable<Quote> query = FindCharacter(character);
 
             if (query.Any())
             {
@@ -48,6 +58,24 @@ namespace NineNineQuotes.Services
                 .Take(takeNumber)
                 .AsNoTracking()
                 .ToListAsync();
+        }
+
+        public async Task<List<Quote>> FindQuote(string character, string searchTerm)
+        {
+            IQueryable<Quote> query = FindCharacter(character);
+            if (query.Any())
+            {
+                return await query
+                    .Where(quote => quote.QuoteText.Contains(searchTerm))
+                    .ToListAsync();
+            }
+            else
+            {
+                return await _context.Quotes
+                    .Where(quote => quote.QuoteText.Contains(searchTerm))
+                    .ToListAsync();
+            }
+
         }
     }
 }

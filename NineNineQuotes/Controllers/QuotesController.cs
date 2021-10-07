@@ -37,11 +37,28 @@ namespace NineNineQuotes.Controllers
         }
 
         // GET api/<QuotesController>/all/Jake?pageNumber=1&pageSize=50
-        [HttpGet("all/{character:maxlength(30)}")]
+        [HttpGet("all/{character:maxlength(20)}")]
         public async Task<IActionResult> GetAllQuotesFromCharacter([FromQuery] PaginationFilter filter, string character)
         {
             PaginationFilter inputFilter = new(filter.PageNumber, filter.PageSize);
             List<Quote> response = await _quoteService.GetAllQuotesFromCharacter(character, filter.PageNumber, filter.PageSize);
+
+            if (response.Count != 0)
+            {
+                return Ok(new PagedResponse<List<Quote>>(response, inputFilter.PageNumber, inputFilter.PageSize));
+            }
+            else
+            {
+                return NoContent();
+            }
+        }
+
+        // GET api/<QuotesController>/find?character=Amy&searchTerm=pet&pageNumber=1&pageSize=50
+        [HttpGet("find")]
+        public async Task<IActionResult> FindQuoteFrom([FromQuery] PaginationFilter filter, string character, string searchTerm)
+        {
+            PaginationFilter inputFilter = new(filter.PageNumber, filter.PageSize);
+            List<Quote> response = await _quoteService.FindQuote(character, searchTerm);
 
             if (response.Count != 0)
             {
