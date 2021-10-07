@@ -25,11 +25,19 @@ namespace NineNineQuotes.Services
         public async Task<Quote> GetRandomQuoteFromCharacterAsync(string character)
         {
             IQueryable<Quote> query = _context.Quotes.Where(quote => quote.Character == character).AsNoTracking();
-            int maxSkip = query.Count();
-            return await query.OrderBy(quote => quote.Id)
-                .Skip(_random.Next(1, maxSkip))
-                .Take(1)
-                .FirstOrDefaultAsync();
+
+            if (query.Any())
+            {
+                int maxSkip = query.Count();
+                return await query.OrderBy(quote => quote.Id)
+                    .Skip(_random.Next(1, maxSkip))
+                    .Take(1)
+                    .FirstOrDefaultAsync();
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public async Task<List<Quote>> GetAllQuotesFromCharacter(string character, int skipNumber, int takeNumber)

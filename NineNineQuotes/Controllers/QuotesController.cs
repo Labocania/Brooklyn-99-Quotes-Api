@@ -24,20 +24,16 @@ namespace NineNineQuotes.Controllers
 
         // GET: api/<QuotesController>/random
         [HttpGet("random")]
-        public SingleResponse<Quote> GetRandomQuote()
+        public async Task<Quote> GetRandomQuote()
         {
-            Quote randomQuote = _quoteService.GetRandomQuoteAsync().Result;
-            SingleResponse<Quote> response = new(randomQuote);
-            return response;
+            return await _quoteService.GetRandomQuoteAsync();
         }
 
         // GET api/<QuotesController>/random/Amy
         [HttpGet("random/{character:maxlength(30)}")]
-        public SingleResponse<Quote> GetRandomQuoteFromCharacter(string character)
+        public async Task<Quote> GetRandomQuoteFromCharacterAsync(string character)
         {
-            Quote randomQuote = _quoteService.GetRandomQuoteFromCharacterAsync(character).Result;
-            SingleResponse<Quote> response = new(randomQuote);
-            return response;
+            return await _quoteService.GetRandomQuoteFromCharacterAsync(character);
         }
 
         // GET api/<QuotesController>/all/Jake?pageNumber=1&pageSize=50
