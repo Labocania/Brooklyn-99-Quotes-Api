@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using NpgsqlTypes;
+using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 
 namespace NineNineQuotes.Data
@@ -11,5 +12,7 @@ namespace NineNineQuotes.Data
         public string Character { get; set; }
         public string Episode { get; set; }
         public string QuoteText { get; set; }
+        [JsonIgnore]
+        public NpgsqlTsVector SearchVector { get; set; }
     }
 }

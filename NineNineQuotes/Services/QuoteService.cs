@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NineNineQuotes.Data;
+using NpgsqlTypes;
 
 namespace NineNineQuotes.Services
 {
@@ -66,13 +67,13 @@ namespace NineNineQuotes.Services
             if (query.Any())
             {
                 return await query
-                    .Where(quote => quote.QuoteText.Contains(searchTerm))
+                    .Where(quote => EF.Functions.ToTsVector(quote.QuoteText).Matches(EF.Functions.PhraseToTsQuery(searchTerm)))
                     .ToListAsync();
             }
             else
             {
                 return await _context.Quotes
-                    .Where(quote => quote.QuoteText.Contains(searchTerm))
+                    .Where(quote => EF.Functions.ToTsVector(quote.QuoteText).Matches(EF.Functions.PhraseToTsQuery(searchTerm)))
                     .ToListAsync();
             }
 
