@@ -1,3 +1,4 @@
+using AspNetCoreRateLimit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -43,6 +44,24 @@ namespace NineNineQuotes
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Brooklyn-99-Quotes", Version = "v1" });
             });
+
+            // needed to load configuration from appsettings.json
+            services.AddOptions();
+
+            // needed to store rate limit counters and ip rules
+            services.AddMemoryCache();
+
+            //load general configuration from appsettings.json
+            services.Configure<IpRateLimitOptions>(Configuration.GetSection("IpRateLimiting"));
+
+            //load ip rules from appsettings.json
+            //services.Configure<IpRateLimitPolicies>(Configuration.GetSection("IpRateLimitPolicies"));
+
+            // inject counter and rules stores
+            services.AddInMemoryRateLimiting();
+
+            // configuration (resolvers, counter key builders)
+            services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -54,6 +73,8 @@ namespace NineNineQuotes
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Brooklyn-99-Quotes v1"));
             }
+
+            app.UseIpRateLimiting();
 
             app.UseHttpsRedirection();
 
@@ -70,6 +91,7 @@ namespace NineNineQuotes
 
     public static class AddDbProviderExtensions
     {
+        // Reference: https://github.com/jincod/dotnetcore-buildpack/issues/33#issuecomment-409935057
         public static IServiceCollection AddDbProvider(this IServiceCollection services, IWebHostEnvironment env, IConfiguration config)
         {
             string connStr = "";
