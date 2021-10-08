@@ -7,10 +7,11 @@ namespace NineNineQuotes.Wrappers
         public int PageNumber { get; set; }
         public int PageSize { get; set; }
 
-        public PagedResponse(T data, int pageNumber, int pageSize)
+        public PagedResponse(T data, int pageNumber, int pageSize, string message = "")
         {
             PageNumber = pageNumber;
             PageSize = pageSize;
+            Message = message;
             Data = data;
         }
     }

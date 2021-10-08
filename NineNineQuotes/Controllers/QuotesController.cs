@@ -24,16 +24,26 @@ namespace NineNineQuotes.Controllers
 
         // GET: api/<QuotesController>/random
         [HttpGet("random")]
-        public async Task<Quote> GetRandomQuote()
+        public async Task<IActionResult> GetRandomQuoteAsync()
         {
-            return await _quoteService.GetRandomQuoteAsync();
+            Quote quote = await _quoteService.GetRandomQuoteAsync();
+            return Ok(new SingleResponse<Quote>(quote, "Quote returned."));
         }
 
         // GET api/<QuotesController>/random/Amy
         [HttpGet("random/{character:maxlength(30)}")]
-        public async Task<Quote> GetRandomQuoteFromCharacterAsync(string character)
+        public async Task<IActionResult> GetRandomQuoteFromCharacterAsync(string character)
         {
-            return await _quoteService.GetRandomQuoteFromCharacterAsync(character);
+            Quote quote = await _quoteService.GetRandomQuoteFromCharacterAsync(character);
+
+            if (quote != null)
+            {
+                return Ok(new SingleResponse<Quote>(quote, "Quote returned."));
+            }
+            else
+            {
+                return NotFound(new SingleResponse<Quote>(quote, "Quote not found."));
+            }
         }
 
         // GET api/<QuotesController>/all/Jake?pageNumber=1&pageSize=50
@@ -45,15 +55,16 @@ namespace NineNineQuotes.Controllers
 
             if (response.Count != 0)
             {
-                return Ok(new PagedResponse<List<Quote>>(response, inputFilter.PageNumber, inputFilter.PageSize));
+                return Ok(new PagedResponse<List<Quote>>(response, inputFilter.PageNumber, inputFilter.PageSize, "Quote returned."));
             }
             else
             {
-                return NoContent();
+                return NotFound(new SingleResponse<List<Quote>>(response, "Quote not found."));
             }
         }
 
         // GET api/<QuotesController>/find?character=Amy&searchTerm=pet&pageNumber=1&pageSize=50
+        // LIMIT string length
         [HttpGet("find")]
         public async Task<IActionResult> FindQuoteFrom([FromQuery] PaginationFilter filter, string character, string searchTerm)
         {
@@ -66,15 +77,8 @@ namespace NineNineQuotes.Controllers
             }
             else
             {
-                return NoContent();
+                return NotFound(new SingleResponse<List<Quote>>(response, "Quote not found."));
             }
-        }
-
-        // GET api/<QuotesController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
         }
     }
 }
