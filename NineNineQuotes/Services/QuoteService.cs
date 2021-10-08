@@ -33,9 +33,9 @@ namespace NineNineQuotes.Services
             return await _context.Quotes.FindAsync(_random.Next(1, maxId));
         }
 
-        public async Task<Quote> GetRandomQuoteFromCharacterAsync(string character)
+        public async Task<Quote> GetRandomQuoteFromAsync(string character, string episode)
         {
-            IQueryable<Quote> query = FindCharacter(character);
+            IQueryable<Quote> query = character != null ? FindCharacter(character) : FindEpisode(episode);
 
             if (query.Any())
             {
