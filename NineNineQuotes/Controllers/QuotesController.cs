@@ -27,7 +27,7 @@ namespace NineNineQuotes.Controllers
         public async Task<IActionResult> GetRandomQuoteAsync()
         {
             Quote quote = await _quoteService.GetRandomQuoteAsync();
-            return Ok(new SingleResponse<Quote>(quote, "Quote returned."));
+            return Ok(new SingleResponse<Quote>(quote));
         }
 
         // GET api/<QuotesController>/random/Amy
@@ -36,14 +36,7 @@ namespace NineNineQuotes.Controllers
         {
             Quote quote = await _quoteService.GetRandomQuoteFromCharacterAsync(character);
 
-            if (quote != null)
-            {
-                return Ok(new SingleResponse<Quote>(quote, "Quote returned."));
-            }
-            else
-            {
-                return NotFound(new SingleResponse<Quote>(quote, "Quote not found."));
-            }
+            return quote != null ? Ok(new SingleResponse<Quote>(quote)) : NotFound(new SingleResponse<Quote>(quote));
         }
 
         // GET api/<QuotesController>/all/Jake?pageNumber=1&pageSize=50
@@ -53,14 +46,9 @@ namespace NineNineQuotes.Controllers
             PaginationFilter inputFilter = new(filter.PageNumber, filter.PageSize);
             List<Quote> response = await _quoteService.GetAllQuotesFromCharacter(character, filter.PageNumber, filter.PageSize);
 
-            if (response.Count != 0)
-            {
-                return Ok(new PagedResponse<List<Quote>>(response, inputFilter.PageNumber, inputFilter.PageSize, "Quote returned."));
-            }
-            else
-            {
-                return NotFound(new SingleResponse<List<Quote>>(response, "Quote not found."));
-            }
+            return response.Count != 0 
+                ? Ok(new PagedResponse<List<Quote>>(response, inputFilter.PageNumber, inputFilter.PageSize))
+                : NotFound(new SingleResponse<List<Quote>>(response));
         }
 
         // GET api/<QuotesController>/find?character=Amy&searchTerm=pet&pageNumber=1&pageSize=50
@@ -71,14 +59,9 @@ namespace NineNineQuotes.Controllers
             PaginationFilter inputFilter = new(filter.PageNumber, filter.PageSize);
             List<Quote> response = await _quoteService.FindQuote(character, searchTerm);
 
-            if (response.Count != 0)
-            {
-                return Ok(new PagedResponse<List<Quote>>(response, inputFilter.PageNumber, inputFilter.PageSize));
-            }
-            else
-            {
-                return NotFound(new SingleResponse<List<Quote>>(response, "Quote not found."));
-            }
+            return response.Count != 0
+                ? Ok(new PagedResponse<List<Quote>>(response, inputFilter.PageNumber, inputFilter.PageSize))
+                : NotFound(new SingleResponse<List<Quote>>(response));
         }
     }
 }

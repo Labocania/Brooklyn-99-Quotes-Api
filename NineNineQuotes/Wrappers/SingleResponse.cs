@@ -8,10 +8,10 @@ namespace NineNineQuotes.Wrappers
         public T Data { get; set; }
 
         public SingleResponse() { }
-        public SingleResponse(T data, string message = "")
+        public SingleResponse(T data)
         {
             Data = data;
-            Message = message;
+            Message = data != null ? "Quote returned." : "Quote not found.";
         }
     }
 }

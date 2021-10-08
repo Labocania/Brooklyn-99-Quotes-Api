@@ -7,11 +7,11 @@ namespace NineNineQuotes.Wrappers
         public int PageNumber { get; set; }
         public int PageSize { get; set; }
 
-        public PagedResponse(T data, int pageNumber, int pageSize, string message = "")
+        public PagedResponse(T data, int pageNumber, int pageSize)
         {
             PageNumber = pageNumber;
             PageSize = pageSize;
-            Message = message;
+            Message = data != null ? "Quote returned." : "Quote not found.";
             Data = data;
         }
     }
