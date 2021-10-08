@@ -42,7 +42,23 @@ namespace NineNineQuotes
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Brooklyn-99-Quotes", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo 
+                { 
+                    Title = "Brooklyn-99-Quotes", 
+                    Version = "v1",
+                    Description = "A simple API to retrieve quotes from the TV show Brooklyn 99.",
+                    Contact = new OpenApiContact
+                    {
+                        Name = "GitHub",
+                        Url = new Uri("https://github.com/Labocania/Brooklyn-99-Quotes-Api")
+                    },
+                    License = new OpenApiLicense
+                    {
+                        Name = "MIT",
+                        Url = new Uri("https://mit-license.org")
+                    }
+                }
+                );
             });
 
             // needed to load configuration from appsettings.json
