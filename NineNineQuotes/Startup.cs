@@ -42,6 +42,7 @@ namespace NineNineQuotes
 
             services.AddSwaggerGen(c =>
             {
+                // Register the Swagger generator, defining 1 or more Swagger documents
                 c.SwaggerDoc("v1", new OpenApiInfo 
                 { 
                     Title = "Brooklyn-99-Quotes", 
@@ -59,6 +60,11 @@ namespace NineNineQuotes
                     }
                 }
                 );
+
+                // Set the comments path for the Swagger JSON and UI.
+                string xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                string xmlPath = System.IO.Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
             });
 
             // needed to load configuration from appsettings.json
@@ -86,9 +92,10 @@ namespace NineNineQuotes
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Brooklyn-99-Quotes v1"));
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Brooklyn-99-Quotes v1"));
 
             app.UseIpRateLimiting();
 
