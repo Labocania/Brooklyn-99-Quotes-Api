@@ -23,6 +23,7 @@ namespace NineNineQuotes.Controllers
 
         [HttpGet("random")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
         public async Task<IActionResult> GetRandomQuoteAsync()
         {
             Quote quote = await _quoteService.GetRandomQuoteAsync();
@@ -34,6 +35,7 @@ namespace NineNineQuotes.Controllers
         [HttpGet("random/from")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
         public async Task<IActionResult> GetRandomQuoteFromAsync([FromQuery] string character, string episode)
         {
             Quote quote = await _quoteService.GetRandomQuoteFromAsync(character, episode);
@@ -44,6 +46,7 @@ namespace NineNineQuotes.Controllers
         [HttpGet("all")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
         public async Task<IActionResult> GetAllQuotesAsync([FromQuery] PaginationFilter filter)
         {
             PaginationFilter inputFilter = new(filter.PageNumber, filter.PageSize);
@@ -59,6 +62,7 @@ namespace NineNineQuotes.Controllers
         [HttpGet("all/from")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
         public async Task<IActionResult> GetAllQuotesFromAsync([FromQuery] string character, string episode, [FromQuery] PaginationFilter filter)
         {
             PaginationFilter inputFilter = new(filter.PageNumber, filter.PageSize);
@@ -74,6 +78,7 @@ namespace NineNineQuotes.Controllers
         [HttpGet("find")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
         public async Task<IActionResult> FindQuoteFromAsync([FromQuery] PaginationFilter filter, string character, string searchTerm)
         {
             PaginationFilter inputFilter = new(filter.PageNumber, filter.PageSize);
