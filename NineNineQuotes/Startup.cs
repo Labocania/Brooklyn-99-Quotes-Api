@@ -41,7 +41,7 @@ namespace NineNineQuotes
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "NineNineQuotes", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Brooklyn-99-Quotes", Version = "v1" });
             });
         }
 
@@ -52,7 +52,7 @@ namespace NineNineQuotes
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "NineNineQuotes v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Brooklyn-99-Quotes v1"));
             }
 
             app.UseHttpsRedirection();
