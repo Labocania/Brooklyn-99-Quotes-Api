@@ -8,8 +8,6 @@ using NineNineQuotes.Wrappers;
 using NineNineQuotes.Filter;
 using Microsoft.AspNetCore.Http;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace NineNineQuotes.Controllers
 {
     [Route("api/[controller]")]
@@ -42,15 +40,29 @@ namespace NineNineQuotes.Controllers
             return quote != null ? Ok(new SingleResponse<Quote>(quote)) : NotFound(new SingleResponse<Quote>(quote));
         }
 
+        // GET api/<QuotesController>/all/
+        [HttpGet("all")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetAllQuotesAsync([FromQuery] PaginationFilter filter)
+        {
+            PaginationFilter inputFilter = new(filter.PageNumber, filter.PageSize);
+            List<Quote> response = await _quoteService.GetAllQuotesAsync(filter.PageNumber, filter.PageSize);
+
+            return response.Count != 0
+                ? Ok(new PagedResponse<List<Quote>>(response, inputFilter.PageNumber, inputFilter.PageSize))
+                : NotFound(new SingleResponse<List<Quote>>(response));
+        }
+
         // GET api/<QuotesController>/all/from?character=Jake&pageNumber=2&pageSize=50
         // GET api/<QuotesController>/all/from?episode=AC/DC&pageNumber=2&pageSize=50
         [HttpGet("all/from")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetAllQuotesFromCharacter([FromQuery] string character, string episode, [FromQuery] PaginationFilter filter)
+        public async Task<IActionResult> GetAllQuotesFromAsync([FromQuery] string character, string episode, [FromQuery] PaginationFilter filter)
         {
             PaginationFilter inputFilter = new(filter.PageNumber, filter.PageSize);
-            List<Quote> response = await _quoteService.GetAllQuotesFrom(character, episode, filter.PageNumber, filter.PageSize);
+            List<Quote> response = await _quoteService.GetAllQuotesFromAsync(character, episode, filter.PageNumber, filter.PageSize);
 
             return response.Count != 0 
                 ? Ok(new PagedResponse<List<Quote>>(response, inputFilter.PageNumber, inputFilter.PageSize))
@@ -58,13 +70,14 @@ namespace NineNineQuotes.Controllers
         }
 
         // GET api/<QuotesController>/find?character=Amy&searchTerm=pet&pageNumber=1&pageSize=50
+        // GET api/<QuotesController>/find?&searchTerm=pet&pageNumber=1&pageSize=50
         [HttpGet("find")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> FindQuoteFrom([FromQuery] PaginationFilter filter, string character, string searchTerm)
+        public async Task<IActionResult> FindQuoteFromAsync([FromQuery] PaginationFilter filter, string character, string searchTerm)
         {
             PaginationFilter inputFilter = new(filter.PageNumber, filter.PageSize);
-            List<Quote> response = await _quoteService.FindQuote(character, searchTerm);
+            List<Quote> response = await _quoteService.FindQuoteAsync(character, searchTerm);
 
             return response.Count != 0
                 ? Ok(new PagedResponse<List<Quote>>(response, inputFilter.PageNumber, inputFilter.PageSize))

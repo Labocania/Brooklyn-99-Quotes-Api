@@ -50,7 +50,17 @@ namespace NineNineQuotes.Services
             }
         }
 
-        public async Task<List<Quote>> GetAllQuotesFrom(string character, string episode, int skipNumber, int takeNumber)
+        public async Task<List<Quote>> GetAllQuotesAsync(int skipNumber, int takeNumber)
+        {
+            return await _context.Quotes
+                .AsNoTracking()
+                .OrderBy(quote => quote.Id)
+                .Skip((skipNumber - 1) * takeNumber)
+                .Take(takeNumber)
+                .ToListAsync();
+        }
+
+        public async Task<List<Quote>> GetAllQuotesFromAsync(string character, string episode, int skipNumber, int takeNumber)
         {
             IQueryable<Quote> query = character != null ? FindCharacter(character) : FindEpisode(episode);
 
@@ -68,7 +78,7 @@ namespace NineNineQuotes.Services
             }
         }
 
-        public async Task<List<Quote>> FindQuote(string character, string searchTerm)
+        public async Task<List<Quote>> FindQuoteAsync(string character, string searchTerm)
         {
             IQueryable<Quote> query = FindCharacter(character);
             if (query.Any())
