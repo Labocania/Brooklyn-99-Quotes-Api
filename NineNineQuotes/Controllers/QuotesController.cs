@@ -42,14 +42,15 @@ namespace NineNineQuotes.Controllers
             return quote != null ? Ok(new SingleResponse<Quote>(quote)) : NotFound(new SingleResponse<Quote>(quote));
         }
 
-        // GET api/<QuotesController>/all/Jake?pageNumber=1&pageSize=50
-        [HttpGet("all/{character:maxlength(20)}")]
+        // GET api/<QuotesController>/all/from?character=Jake&pageNumber=2&pageSize=50
+        // GET api/<QuotesController>/all/from?episode=AC/DC&pageNumber=2&pageSize=50
+        [HttpGet("all/from")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetAllQuotesFromCharacter([FromQuery] PaginationFilter filter, string character)
+        public async Task<IActionResult> GetAllQuotesFromCharacter([FromQuery] string character, string episode, [FromQuery] PaginationFilter filter)
         {
             PaginationFilter inputFilter = new(filter.PageNumber, filter.PageSize);
-            List<Quote> response = await _quoteService.GetAllQuotesFromCharacter(character, filter.PageNumber, filter.PageSize);
+            List<Quote> response = await _quoteService.GetAllQuotesFrom(character, episode, filter.PageNumber, filter.PageSize);
 
             return response.Count != 0 
                 ? Ok(new PagedResponse<List<Quote>>(response, inputFilter.PageNumber, inputFilter.PageSize))

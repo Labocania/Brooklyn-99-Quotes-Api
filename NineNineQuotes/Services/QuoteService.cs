@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NineNineQuotes.Data;
-using NpgsqlTypes;
 
 namespace NineNineQuotes.Services
 {
@@ -51,14 +50,22 @@ namespace NineNineQuotes.Services
             }
         }
 
-        public async Task<List<Quote>> GetAllQuotesFromCharacter(string character, int skipNumber, int takeNumber)
+        public async Task<List<Quote>> GetAllQuotesFrom(string character, string episode, int skipNumber, int takeNumber)
         {
-            return await _context.Quotes.Where(quote => quote.Character == character)
-                .OrderBy(quote => quote.Id)
-                .Skip((skipNumber - 1) * takeNumber)
-                .Take(takeNumber)
-                .AsNoTracking()
-                .ToListAsync();
+            IQueryable<Quote> query = character != null ? FindCharacter(character) : FindEpisode(episode);
+
+            if (query.Any())
+            {
+                return await query
+                    .OrderBy(quote => quote.Id)
+                    .Skip((skipNumber - 1) * takeNumber)
+                    .Take(takeNumber)
+                    .ToListAsync();
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public async Task<List<Quote>> FindQuote(string character, string searchTerm)
