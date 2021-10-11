@@ -14,7 +14,7 @@ namespace NineNineQuotes.Filter
         public PaginationFilter(int pageNumber, int pageSize)
         {
             PageNumber = pageNumber < 1 ? 1 : pageNumber;
-            PageSize = pageSize > 50 ? 50 : pageSize;
+            PageSize = pageSize <= 0 || pageSize > 50 ? 50 : pageSize;
         }
     }
 }

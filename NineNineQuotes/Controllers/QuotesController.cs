@@ -123,7 +123,7 @@ namespace NineNineQuotes.Controllers
         public async Task<IActionResult> GetAllQuotesAsync([FromQuery] PaginationFilter filter)
         {
             PaginationFilter inputFilter = new(filter.PageNumber, filter.PageSize);
-            List<Quote> response = await _quoteService.GetAllQuotesAsync(filter.PageNumber, filter.PageSize);
+            List<Quote> response = await _quoteService.GetAllQuotesAsync(inputFilter.PageNumber, inputFilter.PageSize);
 
             return response.Count != 0
                 ? Ok(new PagedResponse<List<Quote>>(response, inputFilter.PageNumber, inputFilter.PageSize))
@@ -166,9 +166,9 @@ namespace NineNineQuotes.Controllers
         public async Task<IActionResult> GetAllQuotesFromAsync([FromQuery] string character, string episode, [FromQuery] PaginationFilter filter)
         {
             PaginationFilter inputFilter = new(filter.PageNumber, filter.PageSize);
-            List<Quote> response = await _quoteService.GetAllQuotesFromAsync(character, episode, filter.PageNumber, filter.PageSize);
+            List<Quote> response = await _quoteService.GetAllQuotesFromAsync(character, episode, inputFilter.PageNumber, inputFilter.PageSize);
 
-            return response.Count != 0 
+            return response != null && response.Count != 0  
                 ? Ok(new PagedResponse<List<Quote>>(response, inputFilter.PageNumber, inputFilter.PageSize))
                 : NotFound(new SingleResponse<List<Quote>>(response));
         }
@@ -231,7 +231,7 @@ namespace NineNineQuotes.Controllers
             PaginationFilter inputFilter = new(filter.PageNumber, filter.PageSize);
             List<Quote> response = await _quoteService.FindQuoteAsync(character, searchTerm);
 
-            return response.Count != 0
+            return response != null && response.Count != 0
                 ? Ok(new PagedResponse<List<Quote>>(response, inputFilter.PageNumber, inputFilter.PageSize))
                 : NotFound(new SingleResponse<List<Quote>>(response));
         }
