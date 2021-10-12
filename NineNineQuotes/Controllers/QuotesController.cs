@@ -11,8 +11,9 @@ using Microsoft.AspNetCore.Http;
 namespace NineNineQuotes.Controllers
 {
     [Produces("application/json")]
-    [Route("api/[controller]")]
+    [ApiVersion("1")]
     [ApiController]
+    [Route("api/v{version:apiVersion}/[controller]")]
     public class QuotesController : ControllerBase
     {
         private readonly QuoteService _quoteService;

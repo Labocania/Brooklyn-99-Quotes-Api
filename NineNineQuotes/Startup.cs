@@ -6,7 +6,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
+using System.Linq;
 
 namespace NineNineQuotes
 {
@@ -51,8 +53,11 @@ namespace NineNineQuotes
                         Name = "MIT",
                         Url = new Uri("https://mit-license.org")
                     }
-                }
-                );
+                });
+
+                // Credit: https://stackoverflow.com/a/59643262
+                c.OperationFilter<RemoveVersionFromParameter>();
+                c.DocumentFilter<ReplaceVersionWithExactValueInPath>();
 
                 // Set the comments path for the Swagger JSON and UI.
                 string xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -77,6 +82,13 @@ namespace NineNineQuotes
 
             // configuration (resolvers, counter key builders)
             services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+
+            services.AddApiVersioning(config =>
+            {
+                config.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
+                config.AssumeDefaultVersionWhenUnspecified = true;
+                config.ReportApiVersions = true;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -139,6 +151,29 @@ namespace NineNineQuotes
             services.AddDbContext<Data.AppDbContext>(options => options.UseNpgsql(connStr,
                 o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
             return services;
+        }
+    }
+
+    // Credit: https://stackoverflow.com/a/59643262
+    public class RemoveVersionFromParameter : IOperationFilter
+    {
+        public void Apply(OpenApiOperation operation, OperationFilterContext context)
+        {
+            var versionParameter = operation.Parameters.Single(p => p.Name == "version");
+            operation.Parameters.Remove(versionParameter);
+        }
+    }
+
+    public class ReplaceVersionWithExactValueInPath : IDocumentFilter
+    {
+        public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
+        {
+            var paths = new OpenApiPaths();
+            foreach (var path in swaggerDoc.Paths)
+            {
+                paths.Add(path.Key.Replace("v{version}", swaggerDoc.Info.Version), path.Value);
+            }
+            swaggerDoc.Paths = paths;
         }
     }
 }
