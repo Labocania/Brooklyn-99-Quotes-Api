@@ -32,7 +32,7 @@
   
   <Target Name="PrePublishTarget" AfterTargets="Publish">
     <Exec Command="dotnet new tool-manifest" />
-    <Exec Command="dotnet tool install dotnet-ef --version 3.0.0" />
+    <Exec Command="dotnet tool install dotnet-ef" />
     <Exec Command="dotnet tool run dotnet-ef database update" />
   </Target>
 
