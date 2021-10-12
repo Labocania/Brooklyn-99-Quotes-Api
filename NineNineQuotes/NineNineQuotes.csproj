@@ -25,11 +25,6 @@
   
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
   
-  <ItemGroup>
-    <Folder Include="Migrations\" />
-    <Folder Include="wwwroot\images\" />
-  </ItemGroup>
-  
   <Target Name="PrePublishTarget" AfterTargets="Publish">
     <Exec Command="dotnet new tool-manifest" />
     <Exec Command="dotnet tool install dotnet-ef" />

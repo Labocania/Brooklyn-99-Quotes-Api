@@ -54,7 +54,7 @@ namespace NineNineQuotes.Controllers
         /// Returns random quote from a character or episode.
         /// </summary>
         /// <remarks>
-        /// If both query params are provided only character quotes are returned.
+        /// If both query params are provided only character quotes are returned. Sample Request:
         ///
         ///     GET api/quotes/random/from?character=Amy
         ///     {
@@ -75,6 +75,12 @@ namespace NineNineQuotes.Controllers
         ///             "QuoteText": "..."
         ///         }       
         ///     }
+        ///     
+        ///     GET api/quotes/random/from?episode=a
+        ///     {
+        ///        "Message": "Quote not found.",
+        ///        "Data": null       
+        ///     }
         ///
         /// </remarks>
         /// <returns>Returns random quote from a character or episode.</returns>
@@ -82,7 +88,6 @@ namespace NineNineQuotes.Controllers
         /// <response code="404">Returns message "Quote not found".</response>
         [HttpGet("random/from")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetRandomQuoteFromAsync([FromQuery] string character, string episode)
         {
             Quote quote = await _quoteService.GetRandomQuoteFromAsync(character, episode);
@@ -94,7 +99,7 @@ namespace NineNineQuotes.Controllers
         /// </summary>
         /// <remarks>
         /// Can navigate pages by setting param pageNumber.
-        /// Page size limited by maximum of 50, can be set lower.
+        /// Page size limited by maximum of 50, can be set lower. Sample Request:
         /// 
         ///     GET api/quotes/all
         ///     {   
@@ -114,13 +119,18 @@ namespace NineNineQuotes.Controllers
         ///             }
         ///         ]
         ///     }
+        ///     
+        ///     GET api/quotes/all?PageNumber=500
+        ///     {
+        ///        "Message": "Quote not found.",
+        ///        "Data": null       
+        ///     }
         /// </remarks>
         /// <returns>Returns all available quotes.</returns>
         /// <response code="200">Returns all available quotes.</response>
         /// <response code="404">Returns message "Quote not found".</response>
         [HttpGet("all")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAllQuotesAsync([FromQuery] PaginationFilter filter)
         {
             PaginationFilter inputFilter = new(filter.PageNumber, filter.PageSize);
@@ -137,7 +147,7 @@ namespace NineNineQuotes.Controllers
         /// <remarks>
         /// Can navigate pages by setting param pageNumber.
         /// Page size limited by maximum of 50, can be set lower.
-        /// If both query params are provided only character quotes are returned.
+        /// If both query params are provided only character quotes are returned. Request Sample:
         /// 
         ///     GET api/quotes/all/from?character=Jake
         ///     {   
@@ -157,13 +167,18 @@ namespace NineNineQuotes.Controllers
         ///             }
         ///         ]
         ///     }
+        ///     
+        ///     GET api/quotes/all/from?character=a
+        ///     {
+        ///        "Message": "Quote not found.",
+        ///        "Data": null       
+        ///     }
         /// </remarks>
         /// <returns>Returns all available quotes from a character or episode.</returns>
         /// <response code="200">Returns all available quotes from a character or episode.</response>
         /// <response code="404">Returns message "Quote not found".</response>
         [HttpGet("all/from")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAllQuotesFromAsync([FromQuery] string character, string episode, [FromQuery] PaginationFilter filter)
         {
             PaginationFilter inputFilter = new(filter.PageNumber, filter.PageSize);
@@ -181,7 +196,7 @@ namespace NineNineQuotes.Controllers
         /// Can navigate pages by setting param pageNumber.
         /// Page size limited by maximum of 50, can be set lower.
         /// Can search for term in isolation but also filter by character.
-        /// Case insensitive.
+        /// Case insensitive. Request Sample:
         /// 
         ///     GET api/quotes/find?searchTerm=pet
         ///     {   
@@ -220,13 +235,19 @@ namespace NineNineQuotes.Controllers
         ///             }
         ///         ]
         ///     }
+        ///     
+        ///     GET api/quotes/find?character=1
+        ///     {
+        ///        "Message": "Quote not found.",
+        ///        "Data": null       
+        ///     }
+        ///     
         /// </remarks>
         /// <returns>Returns quotes from search term and/or character..</returns>
         /// <response code="200">Returns quotes from search term and/or character.</response>
         /// <response code="404">Returns message "Quote not found".</response>
         [HttpGet("find")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> FindQuoteFromAsync([FromQuery] PaginationFilter filter, string character, string searchTerm)
         {
             PaginationFilter inputFilter = new(filter.PageNumber, filter.PageSize);
@@ -234,7 +255,7 @@ namespace NineNineQuotes.Controllers
 
             return response != null && response.Count != 0
                 ? Ok(new PagedResponse<List<Quote>>(response, inputFilter.PageNumber, inputFilter.PageSize))
-                : NotFound(new SingleResponse<List<Quote>>(response));
+                : NotFound(new SingleResponse<List<Quote>>(null));
         }
     }
 }
